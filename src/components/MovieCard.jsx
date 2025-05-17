@@ -1,6 +1,6 @@
 import React from "react";
 
-const MovieCard = ({ key, movie }) => {
+const MovieCard = ({ movie }) => {
   const {
     title,
     backdrop_path,
