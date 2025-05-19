@@ -4,7 +4,7 @@ import Spinner from "./components/Spinner.jsx";
 import MovieCard from "./components/MovieCard.jsx";
 import { useDebounce } from "react-use";
 import { getTrendingMovies, updateSearchCount } from "./appwrite.js";
-
+import MoviePage from "./components/MoviePage.jsx";
 const API_BASE_URL = "https://api.themoviedb.org/3";
 
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -18,14 +18,27 @@ const API_OPTIONS = {
 };
 
 const App = () => {
+  // Router state
+  const [selectedMovieId, setSelectedMovieId] = useState(null);
+
+  // Search state
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
+  // Movies state
   const [movieList, setMovieList] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
   const [trendingMovies, setTrendingMovies] = useState([]);
+
+  // Check URL for movie ID on component mount
+  useEffect(() => {
+    const path = window.location.pathname;
+    const match = path.match(/\/movie\/(\d+)/);
+    if (match && match[1]) {
+      setSelectedMovieId(parseInt(match[1]));
+    }
+  }, []);
 
   // Debounce the search term to prevent making too many API requests
   // by waiting for the user to stop typing for 500ms
@@ -77,6 +90,18 @@ const App = () => {
     }
   };
 
+  // Handle movie selection
+  const handleMovieClick = (movieId) => {
+    setSelectedMovieId(movieId);
+    window.history.pushState({}, "", `/movie/${movieId}`);
+  };
+
+  // Handle back to list
+  const handleBackToList = () => {
+    setSelectedMovieId(null);
+    window.history.pushState({}, "", "/");
+  };
+
   useEffect(() => {
     fetchMovies(debouncedSearchTerm);
   }, [debouncedSearchTerm]);
@@ -84,6 +109,10 @@ const App = () => {
   useEffect(() => {
     loadTrendingMovies();
   }, []);
+
+  if (selectedMovieId) {
+    return <MoviePage id={selectedMovieId} onBack={handleBackToList} />;
+  }
 
   return (
     <main>
@@ -106,7 +135,11 @@ const App = () => {
 
             <ul>
               {trendingMovies.map((movie, index) => (
-                <li key={movie.$id}>
+                <li
+                  key={movie.$id}
+                  onClick={() => handleMovieClick(movie.id)}
+                  style={{ cursor: "pointer" }}
+                >
                   <p>{index + 1}</p>
                   <img src={movie.poster_url} alt={movie.title} />
                 </li>
@@ -116,7 +149,11 @@ const App = () => {
         )}
 
         <section className="all-movies">
-          <h2>All Movies</h2>
+          <h2>
+            {debouncedSearchTerm
+              ? `Results for "${debouncedSearchTerm}"`
+              : "All Movies"}
+          </h2>
 
           {isLoading ? (
             <Spinner />
@@ -125,7 +162,9 @@ const App = () => {
           ) : (
             <ul>
               {movieList.map((movie) => (
-                <MovieCard key={movie.id} movie={movie} />
+                <div key={movie.id} onClick={() => handleMovieClick(movie.id)}>
+                  <MovieCard movie={movie} />
+                </div>
               ))}
             </ul>
           )}
@@ -136,3 +175,9 @@ const App = () => {
 };
 
 export default App;
+
+{
+  /* <section className="all-movies">
+          <MovieRouter />
+        </section> */
+}
