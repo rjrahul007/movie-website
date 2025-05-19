@@ -315,6 +315,8 @@ import {
   TrendingUp,
   Film,
 } from "lucide-react";
+import { SiNetflix, SiPrimevideo, SiApple, SiHbo } from "react-icons/si";
+import Footer from "./Footer";
 
 // API configuration
 const API_BASE_URL = "https://api.themoviedb.org/3";
@@ -330,31 +332,41 @@ const API_OPTIONS = {
 // Streaming service components with proper branding colors
 const StreamingService = ({ service }) => {
   const services = {
-    netflix: { bg: "bg-red-600", letter: "N" },
-    hulu: { bg: "bg-green-500", letter: "H" },
-    prime: { bg: "bg-blue-500", letter: "P" },
-    apple: { bg: "bg-zinc-700", letter: "A" },
-    disney: { bg: "bg-blue-700", letter: "D" },
-    hbo: { bg: "bg-purple-800", letter: "H" },
+    netflix: {
+      bg: "bg-red-600",
+      logo: <SiNetflix className="text-white text-2xl" />,
+    },
+    prime: {
+      bg: "bg-blue-500",
+      logo: <SiPrimevideo className="text-white text-2xl" />,
+    },
+    apple: {
+      bg: "bg-zinc-700",
+      logo: <SiApple className="text-white text-2xl" />,
+    },
+    hbo: {
+      bg: "bg-purple-800",
+      logo: <SiHbo className="text-white text-2xl" />,
+    },
   };
 
-  const { bg, letter } = services[service] || {
+  const { bg, logo } = services[service] || {
     bg: "bg-gray-600",
-    letter: "?",
+    logo: "?",
   };
 
   return (
     <div
-      className={`${bg} h-12 flex items-center justify-center rounded-md font-bold text-white shadow-md`}
+      className={`${bg} h-12 w-12 flex items-center justify-center rounded-md font-bold text-white shadow-md`}
     >
-      {letter}
+      {logo}
     </div>
   );
 };
 
 // Card component for cast
 const CastCard = ({ person }) => (
-  <div className="bg-zinc-800 rounded-lg overflow-hidden shadow-lg hover:bg-zinc-700 transition-all duration-300 transform hover:-translate-y-1">
+  <div className="movie-card duration-300 transform hover:scale-105">
     <div className="aspect-w-2 aspect-h-3">
       <img
         src={
@@ -367,9 +379,9 @@ const CastCard = ({ person }) => (
         loading="lazy"
       />
     </div>
-    <div className="p-3">
+    <div className="mt-2">
       <p className="font-medium text-sm truncate text-white">{person.name}</p>
-      <p className="text-gray-400 text-xs truncate">{person.character}</p>
+      <p className="text-gray-300 text-xs truncate">{person.character}</p>
     </div>
   </div>
 );
@@ -541,10 +553,9 @@ const MoviePage = ({ id, onBack }) => {
   };
 
   return (
-    <div className="bg-zinc-900 min-h-screen text-white">
+    <div className="bg-primary min-h-screen text-white">
       {/* Fixed gradient overlay for better text readability */}
-      <div className="pattern -z-1" />
-      <div className="fixed inset-0 bg-gradient-to-b from-zinc-900/70 via-zinc-900/20 to-zinc-900 pointer-events-none z-10" />
+      {/* <div className="fixed inset-0 bg-gradient-to-b from-zinc-900/70 via-zinc-900/20 to-zinc-900 pointer-events-none z-10" /> */}
 
       {/* Hero Section with Backdrop */}
       <div
@@ -557,16 +568,14 @@ const MoviePage = ({ id, onBack }) => {
         }}
       >
         {/* Navigation */}
-        <div className="absolute top-0 left-0 right-0 z-20">
-          <div className="container mx-auto px-4 py-6">
-            <button
-              onClick={onBack}
-              className="flex items-center gap-2 bg-zinc-800/80 hover:bg-zinc-700 px-4 py-2 rounded-full backdrop-blur-sm transition-all duration-300"
-            >
-              <ArrowLeft size={16} />
-              <span>Back to Movies</span>
-            </button>
-          </div>
+        <div className="fixed top-4 left-4 z-50 sm:top-6 sm:left-6">
+          <button
+            onClick={onBack}
+            className="flex items-center gap-2 bg-white hover:bg-primary hover:text-white px-4 py-2 rounded-full backdrop-blur-sm text-primary transition-all duration-300"
+          >
+            <ArrowLeft size={16} />
+            <span className="text-sm sm:text-base">Back to Movies</span>
+          </button>
         </div>
 
         {/* Content overlay */}
@@ -588,7 +597,7 @@ const MoviePage = ({ id, onBack }) => {
 
               {/* Movie basic info */}
               <div className="flex-1">
-                <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
+                <h1 className="text-4xl md:text-5xl font-bold tracking-tight drop-shadow-md">
                   {movie.title}
                 </h1>
 
@@ -633,9 +642,9 @@ const MoviePage = ({ id, onBack }) => {
                         <span className="text-2xl font-bold">
                           {movie.vote_average.toFixed(1)}
                         </span>
-                        <span className="text-zinc-400 text-sm ml-1">/10</span>
+                        <span className="text-zinc-300 text-sm ml-1">/10</span>
                       </div>
-                      <div className="text-xs text-zinc-400">
+                      <div className="text-xs text-zinc-300 text-shadow-sm">
                         {(movie.vote_count / 1000).toFixed(1)}K ratings
                       </div>
                     </div>
@@ -712,7 +721,7 @@ const MoviePage = ({ id, onBack }) => {
           {/* Right Column - Details & More */}
           <div className="space-y-8">
             {/* Details */}
-            <section className="bg-zinc-800/70 backdrop-blur-sm rounded-xl p-6 shadow-lg">
+            <section className="movie-card backdrop-blur-sm rounded-xl p-6">
               <h3 className="text-xl font-bold mb-4 pb-2 border-b border-zinc-700">
                 Movie Details
               </h3>
@@ -771,15 +780,13 @@ const MoviePage = ({ id, onBack }) => {
             </section>
 
             {/* Where to Watch */}
-            <section className="bg-zinc-800/70 backdrop-blur-sm rounded-xl p-6 shadow-lg">
+            <section className="movie-card backdrop-blur-sm rounded-xl p-6">
               <h3 className="text-xl font-bold mb-4 pb-2 border-b border-zinc-700">
                 Where to Watch
               </h3>
               <div className="grid grid-cols-3 gap-3">
                 <StreamingService service="netflix" />
-                <StreamingService service="hulu" />
                 <StreamingService service="prime" />
-                <StreamingService service="disney" />
                 <StreamingService service="hbo" />
                 <StreamingService service="apple" />
               </div>
@@ -791,7 +798,7 @@ const MoviePage = ({ id, onBack }) => {
             {/* Production Companies */}
             {movie.production_companies &&
               movie.production_companies.length > 0 && (
-                <section className="bg-zinc-800/70 backdrop-blur-sm rounded-xl p-6 shadow-lg">
+                <section className="movie-card backdrop-blur-sm rounded-xl p-6 shadow-lg">
                   <h3 className="text-xl font-bold mb-4 pb-2 border-b border-zinc-700">
                     Production
                   </h3>
@@ -818,6 +825,7 @@ const MoviePage = ({ id, onBack }) => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

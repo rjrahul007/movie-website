@@ -5,6 +5,7 @@ import MovieCard from "./components/MovieCard.jsx";
 import { useDebounce } from "react-use";
 import { getTrendingMovies, updateSearchCount } from "./appwrite.js";
 import MoviePage from "./components/MoviePage.jsx";
+import Footer from "./components/Footer.jsx";
 const API_BASE_URL = "https://api.themoviedb.org/3";
 
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -93,13 +94,16 @@ const App = () => {
   // Handle movie selection
   const handleMovieClick = (movieId) => {
     setSelectedMovieId(movieId);
-    window.history.pushState({}, "", `/movie/${movieId}`);
+    // window.history.pushState({}, "", `/movie/${movieId}`);
+    window.location.href = `/movie/${movieId}`;
+    window.scrollTo(0, 0);
   };
 
   // Handle back to list
   const handleBackToList = () => {
     setSelectedMovieId(null);
-    window.history.pushState({}, "", "/");
+    window.location.href = "/";
+    window.scrollTo(0, 0);
   };
 
   useEffect(() => {
@@ -115,7 +119,7 @@ const App = () => {
   }
 
   return (
-    <main>
+    <main className="overflow-hidden">
       <div className="pattern" />
 
       <div className="wrapper">
@@ -170,14 +174,9 @@ const App = () => {
           )}
         </section>
       </div>
+      <Footer />
     </main>
   );
 };
 
 export default App;
-
-{
-  /* <section className="all-movies">
-          <MovieRouter />
-        </section> */
-}
